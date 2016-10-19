@@ -1,32 +1,18 @@
 #!/usr/bin/env python
 # -*- coding: iso-8859-15 -*-
 
-import config
-from pymongo import MongoClient
-
-class Collection:
-
+class Articles(object):
+    """ init db info
     """
-        init connection
-    """
-    def __init__(self, collectionName):
-        host    = config.mongodb['host']
-        port    = config.mongodb['port']
-        db      = "pubmed"
+    def __init__(self, mongo):
+        self.collection = mongo.getCollection()
 
-        client  = MongoClient(host=host, port=port)
-        db      = client[db]
-
-        self.collection = db[collectionName]
-
-    """
-        find one pmid
+    """ find one pmid
     """
     def findPmid(self, pmid):
         return self.collection.find_one({"pmid": pmid})
 
-    """
-        find [pmid1, pmid2, ... pmidN]
+    """ find [pmid1, pmid2, ... pmidN]
     """
     def findPmids(self, pmids):
         results = []
@@ -43,3 +29,17 @@ class Collection:
 
     def testTwo(self):
         return self.findPmids([20423155, 20423156])
+
+    def getPmids(self):
+        cursor = self.collection.find(
+            {}, {'pmid':1, '_id':0}).sort("pmid",-1).limit(50)
+        pmids = []
+
+        for pmid in cursor:
+            if 'pmid' in pmid:
+                pmids.append(pmid['pmid'])
+
+        return pmids
+
+    def testFifty(self):
+        return self.findPmids(self.getPmids())
