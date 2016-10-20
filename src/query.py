@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: iso-8859-15 -*-
 
-class Articles(object):
+class ArticlesMongo(object):
     """ init db info
     """
     def __init__(self, mongo):
@@ -43,3 +43,40 @@ class Articles(object):
 
     def testFifty(self):
         return self.findPmids(self.getPmids())
+
+
+class ArticlesMysql(object):
+    def __init__(self, mysql):
+        self.cursor = mysql.getCursor()
+
+    def findPmids(self, pmids):
+
+        results = []
+        queryScript = """select pmid, abstract_text
+        from medline_citation
+        where pmid in ('{pmids}');
+        """.format(pmids="', '".join(pmids))
+
+        self.cursor.execute(queryScript)
+
+        for line in self.cursor.fetchall():
+            pmid = line[0]
+            abst = line[1]
+            singleJson = {'pmid': pmid, 'abstractText':abst}
+            results.append(singleJson)
+
+        return results
+
+    def testFifty(self):
+        return self.findPmids(self.getPmids())
+
+    def getPmids(self):
+
+        queryScript = """select pmid
+        from medline_citation 
+        order by pmid desc 
+        limit 100;"""
+
+        self.cursor.execute(queryScript)
+
+        return [str(x[0]) for x in self.cursor.fetchall()]
