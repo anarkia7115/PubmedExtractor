@@ -7,6 +7,32 @@ import subprocess
 import string
 sleepTime = "2"
 
+def runCmd(execCmd, jobName):
+    # redirect stdout, stderr
+    p = subprocess.Popen(execCmd, 
+                     stdout=subprocess.PIPE,
+                     stderr=subprocess.PIPE)
+
+    (sout, serr) = p.communicate()
+
+    if p.returncode != 0:
+        print "[{JOB_NAME}:STDOUT] ".format(JOB_NAME=jobName.upper())
+        print sout
+        print "[{JOB_NAME}:STDERR] ".format(JOB_NAME=jobName.upper())
+        print serr
+
+        print "{Job_name} Failed!".format(Job_name=jobName.capitalize())
+
+    else:
+        fo = open("{job_name}.stdout".format(job_name=jobName), 'w')
+        fe = open("{job_name}.stderr".format(job_name=jobName), 'w')
+        fo.write(sout)
+        fe.write(serr)
+        fo.close()
+        fe.close()
+
+        print "{Job_name} Extractor Finished Successfully!".format(
+            Job_name=jobName.capitalize())
 
 class DisExecutor:
     def __init__(self, inputPath, outputPath):
@@ -20,9 +46,9 @@ class DisExecutor:
     def run(self):
         #self.execCmd = ["sleep", sleepTime]
         print "running dis..."
-        #print self.execCmd
         os.chdir(config.exec_dir['dis'])
-        subprocess.call(self.execCmd)
+
+        runCmd(self.execCmd, 'dis')
 
 
 class ChemExecutor:
@@ -38,14 +64,16 @@ class ChemExecutor:
         #self.execCmd = ["sleep", sleepTime]
         print "running chem..."
         os.chdir(config.exec_dir['chem'])
-        subprocess.call(self.execCmd)
+
+        runCmd(self.execCmd, 'chem')
 
 
 class GeneExecutor:
     def __init__(self, inputPath, outputPath):
         execPath = config.exec_cmd['gene']
-        self.execCmd = string.split(execPath.format(in_path = inputPath, 
-                                                 out_path = outputPath))
+        self.execCmd = string.split(execPath.format(
+            in_path=inputPath, 
+            out_path=outputPath))
 
     def printCmd(self):
         print self.execCmd
@@ -54,4 +82,5 @@ class GeneExecutor:
         #self.execCmd = ["sleep", sleepTime]
         print "running gene..."
         os.chdir(config.exec_dir['gene'])
-        subprocess.call(self.execCmd)
+
+        runCmd(self.execCmd, 'gene')

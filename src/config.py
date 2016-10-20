@@ -37,8 +37,8 @@ exec_cmd = dict(
 
 file_path = dict(
     article = "{article_dir}/articleOut".format(article_dir=dir_path['article'])
-    , chem = "{chem_dir}/articleOut.tmChem".format(chem_dir=dir_path['chem'])
-    , gene = "{gene_dir}/articleOut".format(gene_dir=dir_path['gene_dir'])
+    , chem = "{chem_dir}/articleOut.tmChem".format(chem_dir=dir_path['chem_rst'])
+    , gene = "{gene_dir}/articleOut".format(gene_dir=dir_path['gene_rst'])
     , dis  = "{data_dir}/disOut".format(data_dir=runtime_data_dir)
 
     , chem_word = "{data_dir}/chemWord".format(data_dir=runtime_data_dir)

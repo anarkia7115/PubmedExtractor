@@ -21,21 +21,68 @@ def main():
     articleJsons = articles.testFifty()
 
     # save data in file
-    #artileOut = "/home/shawn/git/PubmedExtractor/data/article/articleOut"
-    artileOut = file_path['article']
+    #articleOut = "/home/shawn/git/PubmedExtractor/data/article/articleOut"
+    articleOut = config.file_path['article']
+    articleDir = config.dir_path['article']
+    import shutil
+    if os.path.isdir(articleDir):
+        shutil.rmtree(articleDir)
+
+    os.mkdir(articleDir)
     import render
-    aSaver = render.AbstractSaver(articleJsons, artileOut)
+    aSaver = render.AbstractSaver(articleJsons, articleOut)
     aSaver.save()
 
     # execute word extractor
+    inputFilePath   = config.file_path['article']
+    inputDirPath    = config.dir_path['article']
+    disOutputPath   = config.file_path['dis']
+    chemOutputPath  = config.dir_path['chem_rst']
+    geneOutputPath  = config.dir_path['gene_rst']
+
+    if os.path.isdir(chemOutputPath):
+        shutil.rmtree(chemOutputPath)
+    if os.path.isdir(geneOutputPath):
+        shutil.rmtree(geneOutputPath)
+
+    os.mkdir(chemOutputPath)
+    os.mkdir(geneOutputPath)
+
+    import executor
+    de = executor.DisExecutor( inputFilePath, disOutputPath)
+    ce = executor.ChemExecutor(inputDirPath, chemOutputPath)
+    ge = executor.GeneExecutor(inputDirPath, geneOutputPath)
+
+    # run
+    de.run()
+    ce.run()
+    #ge.printCmd()
+    ge.run()
+
     # save word in file
+    geneOutFile = config.file_path['gene']
+    geneWordOut = config.file_path['gene_word']
+    chemOutFile = config.file_path['chem']
+    chemWordOut = config.file_path['chem_word']
+    disOutFile =  config.file_path['dis']
+    disWordOut =  config.file_path['dis_word']
+
+    # run data render
+    import render
+    disWs =  render.WordSaver(disOutFile,  disWordOut,  render.disExtract)
+    chemWs = render.WordSaver(chemOutFile, chemWordOut, render.chemExtract)
+    geneWs = render.WordSaver(geneOutFile, geneWordOut, render.geneExtract)
+
+    disWs.save()
+    chemWs.save()
+    geneWs.save()
 
     return
 
 def test_DisExecutor():
     # strings
-    artileOut = config.file_path['article']
-    inputPath = artileOut
+    articleOut = config.file_path['article']
+    inputPath = articleOut
     outputPath = config.file_path['dis']
 
     # executor init
@@ -106,8 +153,8 @@ def test_WordSaver_dis():
     disWs.save()
 
 if __name__ == "__main__":
-    test_DisExecutor()
+    #test_DisExecutor()
     #test_ChemExecutor()
     #test_GeneExecutor()
-    test_WordSaver_dis()
-    #main()
+    #test_WordSaver_dis()
+    main()
