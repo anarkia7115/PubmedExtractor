@@ -2,7 +2,6 @@
 # -*- coding: iso-8859-15 -*-
 
 import config
-from pymongo import MongoClient
 
 class Mongo(object):
     def __new__(cls):
@@ -18,8 +17,9 @@ class Mongo(object):
     def __init__(self):
         host    = config.mongodb['host']
         port    = config.mongodb['port']
-        dbName      = "pubmed"
+        dbName  = "pubmed"
 
+        from pymongo import MongoClient
         client  = MongoClient(host=host, port=port)
         self.db      = client[dbName]
 
@@ -31,4 +31,30 @@ class Mongo(object):
 
     def getCollection(self):
         return self.collection
+
+class Mysql(object):
+    def __new__(cls):
+        if not hasattr(cls, 'instance'):
+            print "new db connection."
+            cls.instance = super(Mysql, cls).__new__(cls)
+        else: 
+            print "load previous db connection."
+        return cls.instance
+
+    def __init__(self):
+        host = config.mysql['host']
+        user = config.mysql['user']
+        passwd = config.mysql['passwd']
+        db = config.mysql['db']
+        import MySQLdb
+        db = MySQLdb.connect(
+            host=host,
+            user=user,
+            passwd=passwd,
+            db=db
+        )
+        self.cur = db.cursor()
+
+    def getCursor(self):
+        return self.cur
 
