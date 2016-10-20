@@ -3,6 +3,18 @@ mongodb = dict(
     , port = 27017
 )
 
+rabbitmq = dict(
+    host = "192.168.2.21"
+    , port = 5672
+)
+
+mysql = dict(
+    host="192.168.2.10"
+    , user="devuser"
+    , passwd="111111"
+    , db="pubmed"
+)
+
 runtime_data_dir = "/home/shawn/git/PubmedExtractor/data"
 
 dir_path = dict(
