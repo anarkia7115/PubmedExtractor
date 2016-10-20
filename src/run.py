@@ -17,7 +17,7 @@ def main():
 
     # query articles
     import query
-    articles = query.Articles(pubmed)
+    articles = query.ArticlesMongo(pubmed)
     articleJsons = articles.testFifty()
 
     # save data in file
