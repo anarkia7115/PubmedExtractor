@@ -44,13 +44,31 @@ class AbstractSaver:
     def save(self):
 
         with open(self.outputPath, 'w') as fw:
+            import sys
             for a in self.articles:
                 # parse from json
                 ab, ti, pmid = self.parse(a)
 
                 # write to file (3 lines per json)
                 line1 = "{0}|t|{1}\n".format(pmid, ti)
-                line2 = "{0}|a|{1}\n".format(pmid, ab.encode('utf-8'))
+                try:
+                    line2 = "{0}|a|{1}\n".format(pmid, ab.encode('utf-8'))
+                except UnboundLocalError as err:
+                    print ab
+                    print pmid
+                    print ("UnboundLocal error: {0}".format(err))
+                    raise
+                except UnicodeDecodeError as uniErr:
+                    print ab
+                    print pmid
+                    print ("UnicodeDecode error: {0}".format(uniErr))
+                    raise
+                except:
+                    print pmid
+                    print ("Unexpected error:", sys.exc_info()[0])
+                    raise
+
+
                 fw.write(line1)
                 fw.write(line2)
                 fw.write('\n')

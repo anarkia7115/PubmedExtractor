@@ -6,6 +6,11 @@ mongodb = dict(
 rabbitmq = dict(
     host = "192.168.2.21"
     , port = 5672
+    , user = 'test'
+    , passwd = 'test'
+    , exchange_name = ''
+    , queue_name = 'pubmedTextMiningQueue'
+    , queue_name_callback = 'pubmedTextMiningCallbackQueue'
 )
 
 mysql = dict(

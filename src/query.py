@@ -55,7 +55,7 @@ class ArticlesMysql(object):
         queryScript = """select pmid, abstract_text
         from medline_citation
         where pmid in ('{pmids}');
-        """.format(pmids="', '".join(pmids))
+        """.format(pmids="', '".join([str(x) for x in pmids]))
 
         self.cursor.execute(queryScript)
 

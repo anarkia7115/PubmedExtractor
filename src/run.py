@@ -8,17 +8,25 @@ import config
 logging.basicConfig(level=logging.DEBUG)
 
 #@profile
-def main():
+def main(inputString=None):
 
     # connect db
     import connector
-    pubmed = connector.Mongo()
-    pubmed.setCollection('pubmed')
+    #pubmed = connector.Mongo()
+    #pubmed.setCollection('pubmed')
+
+    pubmed = connector.Mysql()
 
     # query articles
     import query
-    articles = query.ArticlesMongo(pubmed)
-    articleJsons = articles.testFifty()
+    #articles = query.ArticlesMongo(pubmed)
+    articles = query.ArticlesMysql(pubmed)
+    if inputString is None:
+        articleJsons = articles.testFifty()
+    else:
+        import ast
+        pmids = ast.literal_eval(inputString)
+        articleJsons = articles.findPmids(pmids)
 
     # save data in file
     #articleOut = "/home/shawn/git/PubmedExtractor/data/article/articleOut"
@@ -56,7 +64,6 @@ def main():
     # run
     de.run()
     ce.run()
-    #ge.printCmd()
     ge.run()
 
     # save word in file
@@ -68,6 +75,7 @@ def main():
     disWordOut =  config.file_path['dis_word']
 
     # run data render
+    """
     import render
     disWs =  render.WordSaver(disOutFile,  disWordOut,  render.disExtract)
     chemWs = render.WordSaver(chemOutFile, chemWordOut, render.chemExtract)
@@ -76,6 +84,7 @@ def main():
     disWs.save()
     chemWs.save()
     geneWs.save()
+    """
 
     return
 

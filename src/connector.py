@@ -51,6 +51,7 @@ class Mysql(object):
             host=host,
             user=user,
             passwd=passwd,
+            use_unicode=True,
             db=db
         )
         self.cur = db.cursor()
