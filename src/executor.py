@@ -44,7 +44,7 @@ class DisExecutor:
         print self.execCmd
 
     def run(self):
-        self.execCmd = ["sleep", sleepTime]
+        #self.execCmd = ["sleep", sleepTime]
         print "running dis..."
         os.chdir(config.exec_dir['dis'])
 
@@ -61,7 +61,7 @@ class ChemExecutor:
         print self.execCmd
 
     def run(self):
-        self.execCmd = ["sleep", sleepTime]
+        #self.execCmd = ["sleep", sleepTime]
         print "running chem..."
         os.chdir(config.exec_dir['chem'])
 
@@ -79,7 +79,7 @@ class GeneExecutor:
         print self.execCmd
 
     def run(self):
-        self.execCmd = ["sleep", sleepTime]
+        #self.execCmd = ["sleep", sleepTime]
         print "running gene..."
         os.chdir(config.exec_dir['gene'])
 

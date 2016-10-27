@@ -75,7 +75,6 @@ def main(inputString=None):
     disWordOut =  config.file_path['dis_word']
 
     # run data render
-    """
     import render
     disWs =  render.WordSaver(disOutFile,  disWordOut,  render.disExtract)
     chemWs = render.WordSaver(chemOutFile, chemWordOut, render.chemExtract)
@@ -84,9 +83,8 @@ def main(inputString=None):
     disWs.save()
     chemWs.save()
     geneWs.save()
-    """
 
-    return
+    return str([geneWordOut, chemWordOut, disWordOut])
 
 def test_DisExecutor():
     # strings

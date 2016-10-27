@@ -49,7 +49,9 @@ class Waiter():
                 print "running job: [{job_id}]".format(job_id=self.curJobId)
                 inputString = self.get()
                 import run
-                run.main(inputString=inputString)
+                resultMessage = run.main(inputString=inputString)
+                self.mq.send(resultMessage)
+                print "message sent: {}".format(resultMessage)
                 self.curJobId += 1
 
             # check queue listener alive
