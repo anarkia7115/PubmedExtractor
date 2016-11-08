@@ -25,17 +25,21 @@ def main(inputString=None):
         articleJsons = articles.testFifty()
     else:
         import ast
+        # TODO: check pmid format
         pmids = ast.literal_eval(inputString)
         articleJsons = articles.findPmids(pmids)
 
     # save data in file
+
+    # make data dir
     #articleOut = "/home/shawn/git/PubmedExtractor/data/article/articleOut"
     articleOut = config.file_path['article']
     articleDir = config.dir_path['article']
     import shutil
-    if os.path.isdir(articleDir):
-        shutil.rmtree(articleDir)
+    if os.path.isdir(config.runtime_data_dir):
+        shutil.rmtree(config.runtime_data_dir)
 
+    os.mkdir(config.runtime_data_dir)
     os.mkdir(articleDir)
     import render
     aSaver = render.AbstractSaver(articleJsons, articleOut)
@@ -47,11 +51,6 @@ def main(inputString=None):
     disOutputPath   = config.file_path['dis']
     chemOutputPath  = config.dir_path['chem_rst']
     geneOutputPath  = config.dir_path['gene_rst']
-
-    if os.path.isdir(chemOutputPath):
-        shutil.rmtree(chemOutputPath)
-    if os.path.isdir(geneOutputPath):
-        shutil.rmtree(geneOutputPath)
 
     os.mkdir(chemOutputPath)
     os.mkdir(geneOutputPath)
@@ -84,7 +83,7 @@ def main(inputString=None):
     chemWs.save()
     geneWs.save()
 
-    return str([geneWordOut, chemWordOut, disWordOut])
+    return str(dict(geneFilePath=geneWordOut, chemicalFilePath=chemWordOut, diseaseFilePath=disWordOut))
 
 def test_DisExecutor():
     # strings
