@@ -20,13 +20,17 @@ mysql = dict(
     , db="pubmed"
 )
 
-runtime_data_dir = "/home/shawn/git/PubmedExtractor/data"
+import datetime
+
+runtime_data_dir = "/gcbi/storage/pubmedTextMining/{}".format(
+    str(datetime.date.today()))
+pubmed_dir = "/gcbi/product/pubmedTextMining"
 
 dir_path = dict(
     article = "{data_dir}/article".format(data_dir=runtime_data_dir)
     , chem_rst = "{data_dir}/chemOut".format(data_dir=runtime_data_dir)
     , gene_rst = "{data_dir}/geneOut".format(data_dir=runtime_data_dir)
-    , pubmed = "/home/shawn/workspace/PubMed"
+    , pubmed = pubmed_dir
 )
 
 exec_dir = dict(
