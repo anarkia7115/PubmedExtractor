@@ -24,8 +24,12 @@ def runCmd(execCmd, jobName):
         print "{Job_name} Failed!".format(Job_name=jobName.capitalize())
 
     else:
-        fo = open("{job_name}.stdout".format(job_name=jobName), 'w')
-        fe = open("{job_name}.stderr".format(job_name=jobName), 'w')
+        fo = open("{run_dir}/{job_name}.stdout".format(
+            run_dir=config.runtime_data_dir, 
+            job_name=jobName), 'w')
+        fe = open("{run_dir}/{job_name}.stderr".format(
+            run_dir=config.runtime_data_dir, 
+            job_name=jobName), 'w')
         fo.write(sout)
         fe.write(serr)
         fo.close()
