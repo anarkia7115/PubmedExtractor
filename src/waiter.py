@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: iso-8859-15 -*-
 
-MAX_JOB_NUM=99
-REFRESH_INTERVAL=1
+MAX_JOB_NUM=9999
+REFRESH_INTERVAL=10
 
 import time
 
