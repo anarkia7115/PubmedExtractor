@@ -61,7 +61,7 @@ class ArticlesMysql(object):
 
         for line in self.cursor.fetchall():
             pmid = line[0]
-            abst = line[1]
+            abst = line[1].replace('|', ' ')
             singleJson = {'pmid': pmid, 'abstractText':abst}
             results.append(singleJson)
 
