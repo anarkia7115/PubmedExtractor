@@ -24,11 +24,13 @@ def runCmd(execCmd, jobName):
         print "{Job_name} Failed!".format(Job_name=jobName.capitalize())
 
     else:
+        import datetime
+        today = str(datetime.date.today())
         fo = open("{run_dir}/{job_name}.stdout".format(
-            run_dir=config.runtime_data_dir, 
+            run_dir=config.runtime_data_dir.format(date_today=today), 
             job_name=jobName), 'w')
         fe = open("{run_dir}/{job_name}.stderr".format(
-            run_dir=config.runtime_data_dir, 
+            run_dir=config.runtime_data_dir.format(date_today=today), 
             job_name=jobName), 'w')
         fo.write(sout)
         fe.write(serr)

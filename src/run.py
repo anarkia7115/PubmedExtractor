@@ -33,24 +33,28 @@ def main(inputString=None):
 
     # make data dir
     #articleOut = "/home/shawn/git/PubmedExtractor/data/article/articleOut"
-    articleOut = config.file_path['article']
-    articleDir = config.dir_path['article']
-    import shutil
-    if os.path.isdir(config.runtime_data_dir):
-        shutil.rmtree(config.runtime_data_dir)
+    import datetime
+    today = str(datetime.date.today())
 
-    os.mkdir(config.runtime_data_dir)
+    articleOut = config.file_path['article'].format(date_today=today)
+    articleDir = config.dir_path['article'].format(date_today=today)
+
+    import shutil
+    if os.path.isdir(config.runtime_data_dir.format(date_today=today)):
+        shutil.rmtree(config.runtime_data_dir.format(date_today=today))
+
+    os.mkdir(config.runtime_data_dir.format(date_today=today))
     os.mkdir(articleDir)
     import render
     aSaver = render.AbstractSaver(articleJsons, articleOut)
     aSaver.save()
 
     # execute word extractor
-    inputFilePath   = config.file_path['article']
-    inputDirPath    = config.dir_path['article']
-    disOutputPath   = config.file_path['dis']
-    chemOutputPath  = config.dir_path['chem_rst']
-    geneOutputPath  = config.dir_path['gene_rst']
+    inputFilePath   = config.file_path['article'].format(date_today=today)
+    inputDirPath    = config.dir_path['article'].format(date_today=today)
+    disOutputPath   = config.file_path['dis'].format(date_today=today)
+    chemOutputPath  = config.dir_path['chem_rst'].format(date_today=today)
+    geneOutputPath  = config.dir_path['gene_rst'].format(date_today=today)
 
     os.mkdir(chemOutputPath)
     os.mkdir(geneOutputPath)
@@ -66,12 +70,12 @@ def main(inputString=None):
     ge.run()
 
     # save word in file
-    geneOutFile = config.file_path['gene']
-    geneWordOut = config.file_path['gene_word']
-    chemOutFile = config.file_path['chem']
-    chemWordOut = config.file_path['chem_word']
-    disOutFile =  config.file_path['dis']
-    disWordOut =  config.file_path['dis_word']
+    geneOutFile = config.file_path['gene'].format(date_today=today)
+    geneWordOut = config.file_path['gene_word'].format(date_today=today)
+    chemOutFile = config.file_path['chem'].format(date_today=today)
+    chemWordOut = config.file_path['chem_word'].format(date_today=today)
+    disOutFile =  config.file_path['dis'].format(date_today=today)
+    disWordOut =  config.file_path['dis_word'].format(date_today=today)
 
     # run data render
     import render
@@ -86,10 +90,13 @@ def main(inputString=None):
     return str(dict(geneFilePath=geneWordOut, chemicalFilePath=chemWordOut, diseaseFilePath=disWordOut))
 
 def test_DisExecutor():
+    import datetime
+    today = str(datetime.date.today())
+
     # strings
-    articleOut = config.file_path['article']
+    articleOut = config.file_path['article'].format(date_today=today)
     inputPath = articleOut
-    outputPath = config.file_path['dis']
+    outputPath = config.file_path['dis'].format(date_today=today)
 
     # executor init
     import executor
@@ -102,10 +109,13 @@ def test_DisExecutor():
     print "de finished! "
 
 def test_ChemExecutor():
+    import datetime
+    today = str(datetime.date.today())
+
     # strings
-    inputPath = config.dir_path['article']
+    inputPath = config.dir_path['article'].format(date_today=today)
     # mkdir outputPath
-    outputPath = config.dir_path['chem_rst']
+    outputPath = config.dir_path['chem_rst'].format(date_today=today)
     os.mkdir(outputPath)
 
     # executor init
@@ -119,10 +129,13 @@ def test_ChemExecutor():
     print "ce finished! "
 
 def test_GeneExecutor():
+    import datetime
+    today = str(datetime.date.today())
+
     # strings
-    inputPath = config.dir_path['article']
+    inputPath = config.dir_path['article'].format(date_today=today)
     # mkdir outputPath
-    outputPath = config.dir_path['gene_rst']
+    outputPath = config.dir_path['gene_rst'].format(date_today=today)
     os.mkdir(outputPath)
 
     # executor init
@@ -136,24 +149,33 @@ def test_GeneExecutor():
     print "ge finished! "
 
 def test_WordSaver_gene():
-    geneOutFile = config.file_path['gene']
-    geneWordOut = config.file_path['gene_word']
+    import datetime
+    today = str(datetime.date.today())
+
+    geneOutFile = config.file_path['gene'].format(date_today=today)
+    geneWordOut = config.file_path['gene_word'].format(date_today=today)
     import render
     geneWs = render.WordSaver(geneOutFile, geneWordOut, render.geneExtract)
     geneWs.save()
 
 def test_WordSaver_chem():
+    import datetime
+    today = str(datetime.date.today())
+
     #chemOutFile = "/home/shawn/git/PubmedExtractor/data/chemOut/articleOut.tmChem"
-    chemOutFile = config.file_path['chem']
-    chemWordOut = config.file_path['chem_word']
+    chemOutFile = config.file_path['chem'].format(date_today=today)
+    chemWordOut = config.file_path['chem_word'].format(date_today=today)
     import render
     chemWs = render.WordSaver(chemOutFile, chemWordOut, render.chemExtract)
     chemWs.save()
 
 def test_WordSaver_dis():
+    import datetime
+    today = str(datetime.date.today())
+
     #disOutFile = "/home/shawn/git/PubmedExtractor/data/disOut"
-    disOutFile = config.file_path['dis']
-    disWordOut = config.file_path['dis_word']
+    disOutFile = config.file_path['dis'].format(date_today=today)
+    disWordOut = config.file_path['dis_word'].format(date_today=today)
     import render
     disWs = render.WordSaver(disOutFile, disWordOut, render.disExtract)
     disWs.save()
