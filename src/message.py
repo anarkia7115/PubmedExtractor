@@ -51,13 +51,23 @@ class MqMessage():
 
     def setConsume(self, queueName=None):
         def callback(ch, method, properties, body):
+            # body print to log
+            logBody = (body[:75] + '..') if len(body) > 75 else body
             print(" [x] [{prop}]\tReceived: {body}".format(prop=properties,
-                                                           body=body))
+                                                           body=logBody))
+
+            # chunk message to small pieces if big enough
             import render
             msgBody = render.Body(body, CHUNK_SIZE)
             msgBody.genPmidList()
-            for chunkMsg in msgBody.chunkPmids():
-                self.queue.put(chunkMsg)
+
+            # big message
+            if msgBody.getPmidSize() >= CHUNK_SIZE:
+                for chunkMsg in msgBody.chunkPmids():
+                    self.queue.put(chunkMsg)
+            # small message
+            else:
+                self.queue.put(body)
 
             print "Queue Size: {}".format(self.queue.qsize())
 
