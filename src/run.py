@@ -27,6 +27,7 @@ def main(inputString=None):
         import ast
         # TODO: check pmid format
         pmids = ast.literal_eval(inputString)
+        print "current working pmid size: {0}".format(len(pmids))
         articleJsons = articles.findPmids(pmids)
 
     # save data in file
