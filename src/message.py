@@ -4,6 +4,8 @@
 import pika
 import config
 
+CHUNK_SIZE=1000
+
 class MqMessage():
     def __init__(self):
         user    = config.rabbitmq['user']
@@ -51,7 +53,11 @@ class MqMessage():
         def callback(ch, method, properties, body):
             print(" [x] [{prop}]\tReceived: {body}".format(prop=properties,
                                                            body=body))
-            self.queue.put(body)
+            import render
+            msgBody = render.Body(body, CHUNK_SIZE)
+            msgBody.genPmidList()
+            for chunkMsg in msgBody.chunkPmids():
+                self.queue.put(chunkMsg)
 
             print "Queue Size: {}".format(self.queue.qsize())
 
