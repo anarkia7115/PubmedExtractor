@@ -2,6 +2,7 @@
 # -*- coding: iso-8859-15 -*-
 
 import re
+import ast
 
 class AbstractSaver:
 
@@ -155,3 +156,34 @@ class WordSaver:
                 else:
                     """ Nothing meaningful """
                     pass
+
+class Body(object):
+
+    def __init__(self, bodyString, step):
+        self.bodyString = bodyString
+        self.step = step
+
+    def genPmidList(self):
+        self.pmidList = ast.literal_eval(self.bodyString)
+
+    def getPmidSize(self):
+        return len(self.pmidList)
+
+    def chunks(self, l, n):
+        for i in range(0, len(l), n):
+            yield str(l[i:i + n])
+
+    def chunkPmids(self):
+        return(self.chunks(self.pmidList, self.step))
+
+def main():
+    pmidStr = "[1,2,3,4,5]"
+    msgBody = Body(pmidStr, 3)
+    msgBody.genPmidList()
+    for i in msgBody.chunkPmids():
+        print i
+        print type(i)
+
+if __name__ == "__main__":
+    main()
+
