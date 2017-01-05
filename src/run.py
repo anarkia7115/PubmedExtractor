@@ -8,7 +8,7 @@ import config
 logging.basicConfig(level=logging.DEBUG)
 
 #@profile
-def main(inputString=None, jobId=None):
+def main(inputString=None, jobId=0):
 
     # connect db
     import connector
@@ -29,8 +29,6 @@ def main(inputString=None, jobId=None):
         pmids = ast.literal_eval(inputString)
         print "current working pmid size: {0}".format(len(pmids))
         articleJsons = articles.findPmids(pmids)
-    if jobId is None:
-        jobId = 0
 
     # save data in file
 
@@ -38,6 +36,10 @@ def main(inputString=None, jobId=None):
     #articleOutput = "/home/shawn/git/PubmedExtractor/data/article/articleOut"
     import datetime
     today = str(datetime.date.today())
+
+    todayDataDirPath = config.runtime_data_dir.format(
+                                date_today=today,
+                                job_id=jobId)
 
     articleOutputPath = config.file_path['article'].format(
                                 data_dir=todayDataDirPath)
@@ -53,8 +55,6 @@ def main(inputString=None, jobId=None):
     chemOutputPath  = config.dir_path['chem_rst'].format(
                                 data_dir=todayDataDirPath)
     geneOutputPath  = config.dir_path['gene_rst'].format(
-                                data_dir=todayDataDirPath)
-    todayDataDirPath = config.runtime_data_dir.format(
                                 data_dir=todayDataDirPath)
 
     import shutil
