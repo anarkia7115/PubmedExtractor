@@ -26,9 +26,9 @@ pubmed_dir = "/gcbi/product/pubmedTextMining"
 
 
 dir_path = dict(
-    article = "{data_dir}/article".format(data_dir=runtime_data_dir)
-    , chem_rst = "{data_dir}/chemOut".format(data_dir=runtime_data_dir)
-    , gene_rst = "{data_dir}/geneOut".format(data_dir=runtime_data_dir)
+    article = "{data_dir}/article"
+    , chem_rst = "{data_dir}/chemOut"
+    , gene_rst = "{data_dir}/geneOut"
     , pubmed = pubmed_dir
 )
 
@@ -59,9 +59,9 @@ file_path = dict(
     article = "{article_dir}/articleOut".format(article_dir=dir_path['article'])
     , chem = "{chem_dir}/articleOut.tmChem".format(chem_dir=dir_path['chem_rst'])
     , gene = "{gene_dir}/articleOut".format(gene_dir=dir_path['gene_rst'])
-    , dis  = "{data_dir}/disOut".format(data_dir=runtime_data_dir)
+    , dis  = "{data_dir}/disOut"
 
-    , chem_word = "{data_dir}/chemWord".format(data_dir=runtime_data_dir)
-    , gene_word = "{data_dir}/geneWord".format(data_dir=runtime_data_dir)
-    , dis_word  = "{data_dir}/disWord".format(data_dir=runtime_data_dir)
+    , chem_word = "{data_dir}/chemWord"
+    , gene_word = "{data_dir}/geneWord"
+    , dis_word  = "{data_dir}/disWord"
 )
