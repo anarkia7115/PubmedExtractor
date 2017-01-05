@@ -20,7 +20,7 @@ mysql = dict(
     , db="pubmed"
 )
 
-runtime_data_dir = "/gcbi/storage/pubmedTextMining/{date_today}"
+runtime_data_dir = "/gcbi/storage/pubmedTextMining/{date_today}_{job_id}"
 
 pubmed_dir = "/gcbi/product/pubmedTextMining"
 

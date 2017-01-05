@@ -4,7 +4,7 @@
 import pika
 import config
 
-CHUNK_SIZE=1000
+CHUNK_SIZE=6
 
 class MqMessage():
     def __init__(self):
@@ -88,3 +88,16 @@ class MqMessage():
             self.queue = queue
 
         self.channel.start_consuming()
+
+def main():
+    exchange = config.rabbitmq['exchange_name']
+    queueName = config.rabbitmq['queue_name']
+
+    mqm = MqMessage()
+
+    jsonString = "[1,2,3,4,5,6,7,8,9,0]"
+    mqm.send(jsonString, exchange, queueName)
+
+if __name__ == "__main__":
+    main()
+

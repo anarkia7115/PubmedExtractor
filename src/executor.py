@@ -7,7 +7,7 @@ import subprocess
 import string
 sleepTime = "2"
 
-def runCmd(execCmd, jobName):
+def runCmd(execCmd, jobName, runtimeDataDir):
     # redirect stdout, stderr
     p = subprocess.Popen(execCmd, 
                      stdout=subprocess.PIPE,
@@ -27,10 +27,10 @@ def runCmd(execCmd, jobName):
         import datetime
         today = str(datetime.date.today())
         fo = open("{run_dir}/{job_name}.stdout".format(
-            run_dir=config.runtime_data_dir.format(date_today=today), 
+            run_dir=runtimeDataDir, 
             job_name=jobName), 'w')
         fe = open("{run_dir}/{job_name}.stderr".format(
-            run_dir=config.runtime_data_dir.format(date_today=today), 
+            run_dir=runtimeDataDir, 
             job_name=jobName), 'w')
         fo.write(sout)
         fe.write(serr)
@@ -49,12 +49,12 @@ class DisExecutor:
     def printCmd(self):
         print self.execCmd
 
-    def run(self):
+    def run(self, runtimeDataDir):
         #self.execCmd = ["sleep", sleepTime]
         print "running dis..."
         os.chdir(config.exec_dir['dis'])
 
-        runCmd(self.execCmd, 'dis')
+        runCmd(self.execCmd, 'dis', runtimeDataDir)
 
 
 class ChemExecutor:
@@ -66,12 +66,12 @@ class ChemExecutor:
     def printCmd(self):
         print self.execCmd
 
-    def run(self):
+    def run(self, runtimeDataDir):
         #self.execCmd = ["sleep", sleepTime]
         print "running chem..."
         os.chdir(config.exec_dir['chem'])
 
-        runCmd(self.execCmd, 'chem')
+        runCmd(self.execCmd, 'chem', runtimeDataDir)
 
 
 class GeneExecutor:
@@ -84,9 +84,9 @@ class GeneExecutor:
     def printCmd(self):
         print self.execCmd
 
-    def run(self):
+    def run(self, runtimeDataDir):
         #self.execCmd = ["sleep", sleepTime]
         print "running gene..."
         os.chdir(config.exec_dir['gene'])
 
-        runCmd(self.execCmd, 'gene')
+        runCmd(self.execCmd, 'gene', runtimeDataDir)

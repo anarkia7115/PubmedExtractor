@@ -8,7 +8,7 @@ import config
 logging.basicConfig(level=logging.DEBUG)
 
 #@profile
-def main(inputString=None):
+def main(inputString=None, jobId=None):
 
     # connect db
     import connector
@@ -29,46 +29,57 @@ def main(inputString=None):
         pmids = ast.literal_eval(inputString)
         print "current working pmid size: {0}".format(len(pmids))
         articleJsons = articles.findPmids(pmids)
+    if jobId is None:
+        jobId = 0
 
     # save data in file
 
     # make data dir
-    #articleOut = "/home/shawn/git/PubmedExtractor/data/article/articleOut"
+    #articleOutput = "/home/shawn/git/PubmedExtractor/data/article/articleOut"
     import datetime
     today = str(datetime.date.today())
 
-    articleOut = config.file_path['article'].format(date_today=today)
-    articleDir = config.dir_path['article'].format(date_today=today)
+    articleOutputPath = config.file_path['article'].format(date_today=today,
+                                                           job_id=jobId)
+    articleDirPath = config.dir_path['article'].format(date_today=today,
+                                                       job_id=jobId)
+
+    inputFilePath   = config.file_path['article'].format(date_today=today,
+                                                         job_id=jobId)
+    inputDirPath    = config.dir_path['article'].format(date_today=today,
+                                                        job_id=jobId)
+    disOutputPath   = config.file_path['dis'].format(date_today=today,
+                                                     job_id=jobId) # file
+    chemOutputPath  = config.dir_path['chem_rst'].format(date_today=today,
+                                                         job_id=jobId) # dir
+    geneOutputPath  = config.dir_path['gene_rst'].format(date_today=today,
+                                                         job_id=jobId) # dir
+    todayDataDirPath = config.runtime_data_dir.format(date_today=today,
+                                                      job_id=jobId)
 
     import shutil
-    if os.path.isdir(config.runtime_data_dir.format(date_today=today)):
-        shutil.rmtree(config.runtime_data_dir.format(date_today=today))
+    if os.path.isdir(todayDataDirPath):
+        shutil.rmtree(todayDataDirPath)
 
-    os.mkdir(config.runtime_data_dir.format(date_today=today))
-    os.mkdir(articleDir)
-    import render
-    aSaver = render.AbstractSaver(articleJsons, articleOut)
-    aSaver.save()
-
-    # execute word extractor
-    inputFilePath   = config.file_path['article'].format(date_today=today)
-    inputDirPath    = config.dir_path['article'].format(date_today=today)
-    disOutputPath   = config.file_path['dis'].format(date_today=today)
-    chemOutputPath  = config.dir_path['chem_rst'].format(date_today=today)
-    geneOutputPath  = config.dir_path['gene_rst'].format(date_today=today)
-
+    os.mkdir(todayDataDirPath)
+    os.mkdir(articleDirPath)
     os.mkdir(chemOutputPath)
     os.mkdir(geneOutputPath)
 
+    import render
+    aSaver = render.AbstractSaver(articleJsons, articleOutputPath)
+    aSaver.save()
+
+    # execute word extractor
     import executor
     de = executor.DisExecutor( inputFilePath, disOutputPath)
     ce = executor.ChemExecutor(inputDirPath, chemOutputPath)
     ge = executor.GeneExecutor(inputDirPath, geneOutputPath)
 
     # run
-    de.run()
-    ce.run()
-    ge.run()
+    de.run(todayDataDirPath)
+    ce.run(todayDataDirPath)
+    ge.run(todayDataDirPath)
 
     # save word in file
     geneOutFile = config.file_path['gene'].format(date_today=today)
@@ -95,8 +106,8 @@ def test_DisExecutor():
     today = str(datetime.date.today())
 
     # strings
-    articleOut = config.file_path['article'].format(date_today=today)
-    inputPath = articleOut
+    articleOutputPath = config.file_path['article'].format(date_today=today)
+    inputPath = articleOutputPath
     outputPath = config.file_path['dis'].format(date_today=today)
 
     # executor init
