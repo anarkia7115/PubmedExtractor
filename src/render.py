@@ -109,7 +109,7 @@ class WordExtractor:
             return 'NO-PMID', 'NO-WORD'
         pmid = factors[0]
         #wordName = factors[3]
-        geneId = factors[5]
+        geneId = factors[5].rstrip()
         if geneId not in self.geneDict:
             return 'NO-PMID', 'NO-WORD'
         else:
