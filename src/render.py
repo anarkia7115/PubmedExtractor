@@ -76,12 +76,12 @@ class AbstractSaver:
 
 class WordExtractor:
     def __init__(self, stepName):
-        if stepName = "gene":
+        if stepName == "gene":
             self.extractFunc = self.geneExtract
             self.geneWordSet = getGeneWordSet()
-        elif stepName = "chem":
+        elif stepName == "chem":
             self.extractFunc = self.chemExtract
-        elif stepName = "dis":
+        elif stepName == "dis":
             self.extractFunc = self.disExtract
         else:
             raise NameError("Unknown step name!")
