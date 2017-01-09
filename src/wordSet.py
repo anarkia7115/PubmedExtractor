@@ -7,6 +7,17 @@ def loadGeneSymbolList(symbolTxtPath):
 
     return wordSet
 
+def loadGeneDict(geneidSymbolTsvPath):
+    wordDict = dict()
+    with open(geneidSymbolTsvPath) as infile:
+        for line in infile:
+            fields = line.strip().split()
+            geneId = fields[0]
+            symbol = fields[1]
+            wordDict[geneId] = symbol
+
+    return wordDict
+
 def main():
 
     symbolTxtPath = "../DICTIONARY/symbol_list.txt"
