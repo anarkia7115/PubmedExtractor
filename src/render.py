@@ -73,51 +73,74 @@ class AbstractSaver:
                 fw.write(line1)
                 fw.write(line2)
                 fw.write('\n')
+
+class WordExtractor:
+    def __init__(self, stepName):
+        if stepName = "gene":
+            self.extractFunc = self.geneExtract
+            self.geneWordSet = getGeneWordSet()
+        elif stepName = "chem":
+            self.extractFunc = self.chemExtract
+        elif stepName = "dis":
+            self.extractFunc = self.disExtract
+        else:
+            raise NameError("Unknown step name!")
+
+    def getExtractFunc(self):
+        return self.extractFunc
+
+    def getGeneWordSet(self):
+        import wordSet, config
+        geneWordSet = wordSet.loadGeneSymbolList(
+                config.file_path['gene_symbol_list'])
+        return geneWordSet
         
+    def geneExtract(self, line):
+        factors = line.split('\t')
+        wordType = factors[4]
+        if wordType != 'Gene':
+            return 'NO-PMID', 'NO-WORD'
+        pmid = factors[0]
+        wordName = factors[3]
+        if wordName not in self.geneWordSet:
+            return 'NO-PMID', 'NO-WORD'
+        return pmid, wordName
+        #return "{pmid},{word_name}".format(pmid=pmid, word_name=wordName)
 
-def geneExtract(line):
-    factors = line.split('\t')
-    wordType = factors[4]
-    if wordType != 'Gene':
-        return 'NO-PMID', 'NO-WORD'
-    pmid = factors[0]
-    wordName = factors[3]
-    return pmid, wordName
-    #return "{pmid},{word_name}".format(pmid=pmid, word_name=wordName)
+    def chemExtract(self, line):
+        factors = line.split('\t')
+        wordType = factors[4]
+        if wordType != 'Chemical':
+            return 'NO-PMID', 'NO-WORD'
+        pmid = factors[0]
+        wordName = factors[3]
+        mesh = factors[5].rstrip()
+        return pmid, mesh
+        #return "{pmid},{mesh_id},{word_name}".format(pmid=pmid, mesh_id=mesh, word_name=wordName)
 
-def chemExtract(line):
-    factors = line.split('\t')
-    wordType = factors[4]
-    if wordType != 'Chemical':
-        return 'NO-PMID', 'NO-WORD'
-    pmid = factors[0]
-    wordName = factors[3]
-    mesh = factors[5].rstrip()
-    return pmid, mesh
-    #return "{pmid},{mesh_id},{word_name}".format(pmid=pmid, mesh_id=mesh, word_name=wordName)
-
-def disExtract(line):
-    factors = line.split('\t')
-    wordType = factors[4]
-    if wordType != 'Disease':
-        return 'NO-PMID', 'NO-WORD'
-    pmid = factors[0]
-    wordName = factors[3]
-    mesh = factors[5].rstrip()
-    return pmid, mesh
-    #return "{pmid},{mesh_id},{word_name}".format(pmid=pmid, mesh_id=mesh, word_name=wordName)
+    def disExtract(self, line):
+        factors = line.split('\t')
+        wordType = factors[4]
+        if wordType != 'Disease':
+            return 'NO-PMID', 'NO-WORD'
+        pmid = factors[0]
+        wordName = factors[3]
+        mesh = factors[5].rstrip()
+        return pmid, mesh
+        #return "{pmid},{mesh_id},{word_name}".format(pmid=pmid, mesh_id=mesh, word_name=wordName)
 
 class WordSaver:
 
     """
     """
-    def __init__(self, inputPath, outputPath, extractFunc):
+    def __init__(self, inputPath, outputPath, stepName):
         self.inputPath = inputPath
         self.outputPath = outputPath
         self.extractFunc = extractFunc
         self.pmid = 'NO-PMID'
         self.wordSet = set()
-        pass
+        self.wordExtractor = WordExtractor(stepName)
+        self.extractFunc = wordExtractor.getExtractFunc()
 
     def parse(self, line):
 
