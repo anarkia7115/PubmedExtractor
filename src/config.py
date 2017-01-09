@@ -64,4 +64,5 @@ file_path = dict(
     , chem_word = "{data_dir}/chemWord"
     , gene_word = "{data_dir}/geneWord"
     , dis_word  = "{data_dir}/disWord"
+    , gene_symbol_list = "{0}/DICTIONARY/symbol_list.txt".format(pubmed_dir)
 )
