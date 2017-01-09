@@ -97,9 +97,9 @@ def main(inputString=None, jobId=0):
 
     # run data render
     import render
-    disWs =  render.WordSaver(disOutFile,  disWordOut,  render.disExtract)
-    chemWs = render.WordSaver(chemOutFile, chemWordOut, render.chemExtract)
-    geneWs = render.WordSaver(geneOutFile, geneWordOut, render.geneExtract)
+    disWs =  render.WordSaver(disOutFile,  disWordOut,  "dis")
+    chemWs = render.WordSaver(chemOutFile, chemWordOut, "chem")
+    geneWs = render.WordSaver(geneOutFile, geneWordOut, "gene")
 
     disWs.save()
     chemWs.save()
