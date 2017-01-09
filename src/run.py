@@ -173,15 +173,17 @@ def test_GeneExecutor():
     print "ge finished! "
 
 def test_WordSaver_gene():
-    import datetime
-    today = str(datetime.date.today())
+    #import datetime
+    #today = str(datetime.date.today())
 
-    geneOutFile = config.file_path['gene'].format(
-                                data_dir=todayDataDirPath)
-    geneWordOut = config.file_path['gene_word'].format(
-                                data_dir=todayDataDirPath)
+    geneOutFile = "../geneData/geneOut/articleOut"
+    #geneOutFile = config.file_path['gene'].format(
+    #                            data_dir=todayDataDirPath)
+    #geneWordOut = config.file_path['gene_word'].format(
+    #                            data_dir=todayDataDirPath)
+    geneWordOut = "./geneWordOut"
     import render
-    geneWs = render.WordSaver(geneOutFile, geneWordOut, render.geneExtract)
+    geneWs = render.WordSaver(geneOutFile, geneWordOut, "gene")
     geneWs.save()
 
 def test_WordSaver_chem():
@@ -214,5 +216,5 @@ if __name__ == "__main__":
     #test_DisExecutor()
     #test_ChemExecutor()
     #test_GeneExecutor()
-    #test_WordSaver_dis()
-    main()
+    test_WordSaver_gene()
+    #main()
