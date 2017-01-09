@@ -20,14 +20,14 @@ def loadGeneDict(geneidSymbolTsvPath):
 
 def main():
 
-    symbolTxtPath = "../DICTIONARY/symbol_list.txt"
-    wordSet = loadGeneSymbolList(symbolTxtPath)
+    symbolTxtPath = "../DICTIONARY/gene_id_symbol.tsv"
+    wordSet = loadGeneDict(symbolTxtPath)
 
-    aWord = "NAT1"
-    if aWord in wordSet:
-        print "found word: {}".format(aWord)
-    else:
-        print "word not found"
+    for i in range(0, 10):
+        key = wordSet.keys()[i]
+        val = wordSet.values()[i]
+        print "{}: {}".format(key, val)
+
 
 if __name__ == "__main__":
     main()
