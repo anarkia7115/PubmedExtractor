@@ -78,7 +78,8 @@ class WordExtractor:
     def __init__(self, stepName):
         if stepName == "gene":
             self.extractFunc = self.geneExtract
-            self.geneWordSet = getGeneWordSet()
+            #self.geneWordSet = self.getGeneWordSet()
+            self.geneDict = self.getGeneDict()
         elif stepName == "chem":
             self.extractFunc = self.chemExtract
         elif stepName == "dis":
@@ -95,15 +96,24 @@ class WordExtractor:
                 config.file_path['gene_symbol_list'])
         return geneWordSet
         
+    def getGeneDict(self):
+        import wordSet, config
+        geneDict = wordSet.loadGeneDict(
+                config.file_path['gene_id_symbol_tsv'])
+        return geneDict
+        
     def geneExtract(self, line):
         factors = line.split('\t')
         wordType = factors[4]
         if wordType != 'Gene':
             return 'NO-PMID', 'NO-WORD'
         pmid = factors[0]
-        wordName = factors[3]
-        if wordName not in self.geneWordSet:
+        #wordName = factors[3]
+        geneId = factors[5]
+        if geneId not in self.geneDict:
             return 'NO-PMID', 'NO-WORD'
+        else:
+            wordName = self.geneDict[geneId]
         return pmid, wordName
         #return "{pmid},{word_name}".format(pmid=pmid, word_name=wordName)
 
@@ -136,11 +146,10 @@ class WordSaver:
     def __init__(self, inputPath, outputPath, stepName):
         self.inputPath = inputPath
         self.outputPath = outputPath
-        self.extractFunc = extractFunc
         self.pmid = 'NO-PMID'
         self.wordSet = set()
         self.wordExtractor = WordExtractor(stepName)
-        self.extractFunc = wordExtractor.getExtractFunc()
+        self.extractFunc = self.wordExtractor.getExtractFunc()
 
     def parse(self, line):
 
