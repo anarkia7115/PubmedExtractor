@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: iso-8859-15 -*-
 
+from render import XmlTagRemover
+
 class ArticlesMongo(object):
     """ init db info
     """
@@ -47,12 +49,14 @@ class ArticlesMongo(object):
 
 class ArticlesMysql(object):
     def __init__(self, mysql):
+        self.cnx = mysql
         self.cursor = mysql.getCursor()
+        self.abs_formatter = XmlTagRemover("AbstractText")
 
     def findPmids(self, pmids):
 
         results = []
-        queryScript = """select pmid, abstract_text
+        queryScript = """select pmid, article_title, abstract_text
         from medline_citation
         where pmid in ('{pmids}');
         """.format(pmids="', '".join([str(x) for x in pmids]))
@@ -61,14 +65,39 @@ class ArticlesMysql(object):
 
         for line in self.cursor.fetchall():
             pmid = line[0]
-            abst = line[1].replace('|', ' ')
-            singleJson = {'pmid': pmid, 'abstractText':abst}
+            title = line[1].replace('|', ' ') 
+            abst = self.abs_formatter.trim(line[2].replace('|', ' '))
+            singleJson = {'articleTitle': title, 'pmid': pmid, 'abstractText':abst}
             results.append(singleJson)
 
         return results
 
     def testFifty(self):
         return self.findPmids(self.getPmids())
+
+    def findExcludeTable(self, exclude_pmid_table, limit_lines):
+        results = []
+        if limit_lines > 1000:
+            print "[WARNING] too many lines to query: {}".format(limit_lines)
+
+        queryScript = """
+        select a.pmid, a.article_title, a.abstract_text
+        from pubmed.medline_citation a
+        left outer join {} b
+        on a.pmid = b.pmid
+        where b.pmid is null
+        limit {};""".format(exclude_pmid_table, limit_lines)
+
+        self.cursor.execute(queryScript)
+
+        for line in self.cursor.fetchall():
+            pmid = line[0]
+            title = line[1].replace('|', ' ') 
+            abst = self.abs_formatter.trim(line[2].replace('|', ' '))
+            singleJson = {'articleTitle': title, 'pmid': pmid, 'abstractText':abst}
+            results.append(singleJson)
+
+        return results
 
     def getPmids(self):
 
@@ -80,3 +109,32 @@ class ArticlesMysql(object):
         self.cursor.execute(queryScript)
 
         return [str(x[0]) for x in self.cursor.fetchall()]
+
+
+class TermMysql(object):
+
+    def __init__(self, mysql):
+        self.cnx = mysql
+        self.cursor = mysql.getCursor()
+
+    def insert_terms(self, term_list, out_table):
+
+        insert_term_query = """
+        INSERT INTO {}
+        (pmid, mention_start, mention_end, mention, tag, term_id)
+        VALUES (%s, %s, %s, %s, %s, %s)
+        """.format(out_table)
+
+        self.cursor.executemany(insert_term_query, term_list)
+
+    def insert_pmids(self, pmids, uniq_pmids_table):
+        insert_query = """
+        INSERT INTO {}
+        (pmid)
+        VALUES (%(pmid)s)
+        """.format(uniq_pmids_table)
+        self.cursor.executemany(insert_query, pmids)
+
+
+    def commit(self):
+        self.cnx.commit()
