@@ -51,7 +51,7 @@ class AbstractSaver:
                 ab, ti, pmid = self.parse(a)
 
                 # write to file (3 lines per json)
-                line1 = "{0}|t|{1}\n".format(pmid, ti)
+                line1 = "{0}|t|{1}\n".format(pmid, ti.encode('utf-8'))
                 try:
                     line2 = "{0}|a|{1}\n".format(pmid, ab.encode('utf-8'))
                 except UnboundLocalError as err:
@@ -139,7 +139,36 @@ class WordExtractor:
         return pmid, mesh
         #return "{pmid},{mesh_id},{word_name}".format(pmid=pmid, mesh_id=mesh, word_name=wordName)
 
-class WordSaver:
+class ResultParser(object):
+
+    def __init__(self):
+        pass
+
+    def parse(self, line):
+
+        if re.match(r"\d+\t", line):
+            status = 'LOADING'
+        else:
+            status = 'PASS'
+
+        return status
+
+    def getlines(self, input_path):
+
+        table_lines = []
+
+        with open(input_path) as fi:
+
+            for line in fi:
+                if self.parse(line) == "LOADING":
+                    fields = line.rstrip().split("\t")
+                    if len(fields) == 5:
+                        fields.append(None)
+                    table_lines.append(fields)
+
+        return table_lines
+
+class WordSaver(object):
 
     """
     """
@@ -207,6 +236,19 @@ class Body(object):
 
     def chunkPmids(self):
         return(self.chunks(self.pmidList, self.step))
+
+class XmlTagRemover(object):
+
+    def __init__(self, tag_to_remove):
+        self.tag_to_remove = tag_to_remove
+
+    def trim(self, xml_text):
+        head = "<{0}>".format(self.tag_to_remove)
+        tail = "</{0}>".format(self.tag_to_remove)
+
+        head_idx = xml_text.find(head) + len(head)
+        tail_idx = xml_text.find(tail)
+        return xml_text[head_idx:tail_idx]
 
 def main():
     pmidStr = "[1,2,3,4,5]"
