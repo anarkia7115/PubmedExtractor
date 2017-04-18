@@ -7,8 +7,117 @@ import config
 #from line_profiler import profile
 logging.basicConfig(level=logging.DEBUG)
 
+def mysql_based_main(jobId=0):
+
+    # connect db
+    import connector
+    #pubmed = connector.Mongo()
+    #pubmed.setCollection('pubmed')
+
+    pubmed = connector.Mysql()
+
+    # query articles
+    import query
+    #articles = query.ArticlesMongo(pubmed)
+    articles = query.ArticlesMysql(pubmed)
+
+    uniq_pmids_table   = "pubminer.uniq_pmids"
+    exclude_pmid_table = uniq_pmids_table
+    limit_lines = 300
+    articleJsons = articles.findExcludeTable(exclude_pmid_table,
+                                             limit_lines)
+
+    print "current working pmid size: {0}".format(limit_lines)
+    # save data in file
+
+    # make data dir
+    #articleOutput = "/home/shawn/git/PubmedExtractor/data/article/articleOut"
+    import datetime
+    today = str(datetime.date.today())
+
+    todayDataDirPath = config.runtime_data_dir.format(
+                                date_today=today,
+                                job_id=jobId)
+
+    articleOutputPath = config.file_path['article'].format(
+                                data_dir=todayDataDirPath)
+    articleDirPath = config.dir_path['article'].format(
+                                data_dir=todayDataDirPath)
+
+    inputFilePath   = config.file_path['article'].format(
+                                data_dir=todayDataDirPath)
+    inputDirPath    = config.dir_path['article'].format(
+                                data_dir=todayDataDirPath)
+    disOutputPath   = config.file_path['dis'].format(
+                                data_dir=todayDataDirPath)
+    chemOutputPath  = config.dir_path['chem_rst'].format(
+                                data_dir=todayDataDirPath)
+    geneOutputPath  = config.dir_path['gene_rst'].format(
+                                data_dir=todayDataDirPath)
+
+    import shutil
+    if os.path.isdir(todayDataDirPath):
+        shutil.rmtree(todayDataDirPath)
+
+    os.mkdir(todayDataDirPath)
+    os.mkdir(articleDirPath)
+    os.mkdir(chemOutputPath)
+    os.mkdir(geneOutputPath)
+
+    import render
+    aSaver = render.AbstractSaver(articleJsons, articleOutputPath)
+    aSaver.save()
+
+    # execute word extractor
+    import executor
+    de = executor.DisExecutor( inputFilePath, disOutputPath)
+    ce = executor.ChemExecutor(inputDirPath, chemOutputPath)
+    ge = executor.GeneExecutor(inputDirPath, geneOutputPath)
+
+    # run
+    de.run(todayDataDirPath)
+    ce.run(todayDataDirPath)
+    ge.run(todayDataDirPath)
+
+    # save word in file
+    geneOutFile = config.file_path['gene'].format(
+                                data_dir=todayDataDirPath)
+    geneWordOut = config.file_path['gene_word'].format(
+                                data_dir=todayDataDirPath)
+    chemOutFile = config.file_path['chem'].format(
+                                data_dir=todayDataDirPath)
+    chemWordOut = config.file_path['chem_word'].format(
+                                data_dir=todayDataDirPath)
+    disOutFile =  config.file_path['dis'].format(
+                                data_dir=todayDataDirPath)
+    disWordOut =  config.file_path['dis_word'].format(
+                                data_dir=todayDataDirPath)
+
+    # run data render
+    import render
+    rp = render.ResultParser()
+
+    dis_result_set  = rp.getlines(disOutFile)
+    chem_result_set = rp.getlines(chemOutFile)
+    gene_result_set = rp.getlines(geneOutFile)
+
+    tm = query.TermMysql(pubmed)
+    dis_out_table  = "pubminer.pubmed_extracted_dis"
+    chem_out_table = "pubminer.pubmed_extracted_chem"
+    gene_out_table = "pubminer.pubmed_extracted_gene"
+
+    tm.insert_terms(dis_result_set, dis_out_table)
+    tm.insert_terms(chem_result_set, chem_out_table)
+    tm.insert_terms(gene_result_set, gene_out_table)
+    tm.insert_pmids( articleJsons, uniq_pmids_table)
+
+    tm.commit()
+
+    return str(dict(geneFilePath=geneWordOut, chemicalFilePath=chemWordOut, diseaseFilePath=disWordOut))
+
+
 #@profile
-def main(inputString=None, jobId=0):
+def file_based_main(inputString=None, jobId=0):
 
     # connect db
     import connector
@@ -216,5 +325,5 @@ if __name__ == "__main__":
     #test_DisExecutor()
     #test_ChemExecutor()
     #test_GeneExecutor()
-    test_WordSaver_gene()
-    #main()
+    #test_WordSaver_gene()
+    mysql_based_main()
