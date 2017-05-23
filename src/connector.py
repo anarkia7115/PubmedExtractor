@@ -45,17 +45,25 @@ class Mysql(object):
         host = config.mysql['host']
         user = config.mysql['user']
         passwd = config.mysql['passwd']
-        db = config.mysql['db']
+        db_name = config.mysql['db']
         import MySQLdb
-        db = MySQLdb.connect(
+        self.db = MySQLdb.connect(
             host=host,
             user=user,
             passwd=passwd,
             use_unicode=True,
-            db=db
+            db=db_name
         )
-        self.cur = db.cursor()
+
+        self.db.autocommit(False)
+        self.cur = self.db.cursor()
 
     def getCursor(self):
         return self.cur
+
+    def commit(self):
+        self.db.commit()
+
+    def close(self):
+        self.db.close()
 
