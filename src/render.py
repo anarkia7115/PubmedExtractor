@@ -1,8 +1,9 @@
 #!/usr/bin/env python
-# -*- coding: iso-8859-15 -*-
+# encoding: utf-8
 
 import re
 import ast
+import string
 
 class AbstractSaver:
 
@@ -42,6 +43,10 @@ class AbstractSaver:
 
         return (abstract, title, pmid)
 
+    def clean_line(self, line):
+
+      return ''.join(s for s in line if s in string.printable)
+
     def save(self):
 
         with open(self.outputPath, 'w') as fw:
@@ -52,8 +57,10 @@ class AbstractSaver:
 
                 # write to file (3 lines per json)
                 line1 = "{0}|t|{1}\n".format(pmid, ti.encode('utf-8'))
+                line1 = self.clean_line(line1)
                 try:
                     line2 = "{0}|a|{1}\n".format(pmid, ab.encode('utf-8'))
+                    line2 = self.clean_line(line2)
                 except UnboundLocalError as err:
                     print ab
                     print pmid

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: iso-8859-15 -*-
 
-MAX_JOB_NUM=9999
+MAX_JOB_NUM=29999
 REFRESH_INTERVAL=10
 
 import time
@@ -39,7 +39,11 @@ class Waiter():
         print "out: is listener alive?  {is_alive}".format(
             is_alive=receiverThread.is_alive())
 
-        while(self.curJobId < MAX_JOB_NUM):
+        if(self.curJobId > MAX_JOB_NUM):
+            self.curJobId = 0
+            print "reset job id"
+
+        while(True):
             # check queue size
             jobSize = self.getWaitSize()
             print "job size: {job_size}".format(job_size=jobSize)
